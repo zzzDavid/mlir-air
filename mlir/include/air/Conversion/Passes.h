@@ -14,6 +14,7 @@
 #include "air/Conversion/AIRToAIEPass.h"
 #include "air/Conversion/AIRToAsyncPass.h"
 #include "air/Conversion/ConvertToAIRPass.h"
+#include "air/Conversion/TritonToAIRPass.h"
 namespace xilinx {
 namespace air {
 

@@ -74,6 +74,14 @@ def AIRToAsync : Pass<"air-to-async", "ModuleOp"> {
   }];
 }
 
+def TritonToAIR : Pass<"triton-to-air", "ModuleOp"> {
+  let summary = "Convert Triton dialect to AIR dialect";
+  let constructor = "xilinx::air::createTritonToAIRPass()";
+  let description = [{
+    Convert Triton dialect to AIR dialect
+  }];
+}
+
 def AIRLowering : Pass<"air-to-std", "ModuleOp"> {
   let summary = "AIR dialect lowering";
   let constructor = "xilinx::air::createAIRLoweringPass()";
