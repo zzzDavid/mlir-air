@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 add_air_library(AIRConversionPasses
+TritonToAIRPass.cpp
 ConvertToAIRPass.cpp
 AIRLoweringPass.cpp
 AIRRtToLLVMPass.cpp
@@ -30,3 +31,5 @@ MLIRLinalgTransforms
 MLIRSupport
 MLIRTransforms
 )
+
+target_include_directories(AIRConversionPasses PRIVATE "/home/niansong/triton/python/build/cmake.linux-x86_64-cpython-3.11/include")
