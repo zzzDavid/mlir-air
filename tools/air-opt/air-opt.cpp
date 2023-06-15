@@ -12,6 +12,8 @@
 
 #include "aie/Dialect/AIE/IR/AIEDialect.h"
 
+#include "triton/Dialect/Triton/IR/Dialect.h"
+
 #include "mlir/IR/Dialect.h"
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/InitAllDialects.h"
@@ -45,6 +47,7 @@ int main(int argc, char **argv) {
   registerAllDialects(registry);
   xilinx::air::registerAllDialects(registry);
   registry.insert<xilinx::AIE::AIEDialect>();
+  registry.insert<mlir::triton::TritonDialect>();
 
   registerAllPasses();
   xilinx::air::registerAllPasses();

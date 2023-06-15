@@ -32,4 +32,8 @@ MLIRSupport
 MLIRTransforms
 )
 
-target_include_directories(AIRConversionPasses PRIVATE "/home/niansong/triton/python/build/cmake.linux-x86_64-cpython-3.11/include")
+target_include_directories(AIRConversionPasses PRIVATE "/home/niansong/triton/python/build/include")
+target_link_libraries(AIRConversionPasses PRIVATE 
+    "/home/niansong/triton/python/build/lib/Dialect/Triton/IR/libTritonIR.a"
+    "/home/niansong/triton/python/build/lib/Dialect/Triton/Transforms/libTritonTransforms.a"
+    )
