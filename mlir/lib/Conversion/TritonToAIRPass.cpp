@@ -57,6 +57,28 @@ void analyzeLoadOp(func::FuncOp func) {
   }
 }
 
+void insertHerdOp(func::FuncOp func) {
+  // set builder to the entry block
+  OpBuilder builder(func.getBody());
+  Location loc = builder.getUnknownLoc();
+  SmallVector<Value, 2> dims {
+    builder.create<arith::ConstantIndexOp>(loc, 4),
+    builder.create<arith::ConstantIndexOp>(loc, 1)
+  };
+  SmallVector<Value, 4> args;
+  // need memref args
+  
+  // create the herd op
+  auto herdOp = builder.create<air::HerdOp>(loc, dims, args);
+
+  // build herd body
+  builder.setInsertionPointToStart(&herdOp.getBody().front());
+
+  // build herd terminator
+  builder.setInsertionPointToEnd(&herdOp.getBody().front());
+  builder.create<air::HerdTerminatorOp>(loc);
+}
+
 
 
 class TritonToAIRPass : public TritonToAIRBase<TritonToAIRPass> {
@@ -71,6 +93,7 @@ public:
     // get all functions
     for (auto func : module.getOps<func::FuncOp>()) {
       analyzeLoadOp(func);
+      insertHerdOp(func);
     }
   }
 };
