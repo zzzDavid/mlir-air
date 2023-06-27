@@ -35,5 +35,5 @@ set(LIBS
 
 target_link_libraries(air-opt PRIVATE ${LIBS})
 target_include_directories(air-opt PRIVATE 
-  "/home/niansong/triton/include/"
-  "/home/niansong/triton/python/build/include")
+  "/home/nz264/scratch/triton/include/"
+  "/home/nz264/scratch/triton/python/build/include")

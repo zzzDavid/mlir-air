@@ -32,8 +32,11 @@ MLIRSupport
 MLIRTransforms
 )
 
-target_include_directories(AIRConversionPasses PRIVATE "/home/niansong/triton/python/build/include")
+target_include_directories(AIRConversionPasses PRIVATE 
+    "/home/nz264/scratch/triton/python/build/include"
+    "/home/nz264/scratch/triton/include"
+    )
 target_link_libraries(AIRConversionPasses PRIVATE 
-    "/home/niansong/triton/python/build/lib/Dialect/Triton/IR/libTritonIR.a"
-    "/home/niansong/triton/python/build/lib/Dialect/Triton/Transforms/libTritonTransforms.a"
+    "/home/nz264/scratch/triton/python/build/lib/Dialect/Triton/IR/libTritonIR.a"
+    "/home/nz264/scratch/triton/python/build/lib/Dialect/Triton/Transforms/libTritonTransforms.a"
     )
