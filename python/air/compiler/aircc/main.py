@@ -277,6 +277,7 @@ def run(mlir_module, args=None):
         cmd += [f'-I{aiecc_path}/runtime_lib/x86_64/test_lib/include']
       if "aarch64" in aiecc_target:
         cmd += [f'-I{aiecc_path}/runtime_lib/aarch64/test_lib/include']
+        cmd += [f'-I{aiecc_path}/runtime_lib/aarch64/xaiengine/include']
 
       # libxaie include path
       cmd += [f'-I{libxaie_path}/include']

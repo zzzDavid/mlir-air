@@ -61,8 +61,12 @@ cmake .. \
     -DMLIR_DIR=${LLVM_DIR}/build/lib/cmake/mlir \
     -DAIE_DIR=${MLIR_AIE_DIR}/build/lib/cmake/aie \
     -Dpybind11_DIR=${PYTHON_ROOT}/pybind11/share/cmake/pybind11 \
+    -DAIR_RUNTIME_TARGETS:STRING="aarch64" \
+    -Daarch64_TOOLCHAIN_FILE=/home/niansong/mlir-air/cmake/modules/toolchain_aarch64.cmake \
     -DBUILD_SHARED_LIBS=OFF \
     -DLLVM_USE_LINKER=lld \
+    -DXILINX_XAIE_INCLUDE_DIR=/home/niansong/mlir-air/install/runtime_lib/aarch64/xaiengine/include \
+    -DXILINX_XAIE_LIBS=/home/niansong/mlir-air/install/runtime_lib/aarch64/xaiengine/lib \
     -DCMAKE_MODULE_PATH=${CMAKEMODULES_DIR}/ \
     |& tee cmake.log
 

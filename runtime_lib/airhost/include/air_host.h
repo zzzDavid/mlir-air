@@ -42,6 +42,7 @@ typedef uint64_t air_libxaie_ctx_t;
 air_libxaie_ctx_t air_init_libxaie(uint32_t device_id = 0);
 air_libxaie_ctx_t air_get_libxaie_ctx();
 void air_deinit_libxaie(air_libxaie_ctx_t);
+uint32_t air_perf_counter_diff();
 
 // debug operations
 //

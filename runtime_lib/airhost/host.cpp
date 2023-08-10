@@ -52,6 +52,7 @@ uint64_t _air_host_bram_paddr = 0;
 air_module_handle_t _air_host_active_module = (air_module_handle_t) nullptr;
 
 const char vck5000_driver_name[] = "/dev/amdair";
+uint32_t _air_start[4][4][4];
 }
 
 #ifdef AIR_PCIE
@@ -314,6 +315,32 @@ air_module_desc_t *air_module_get_desc(air_module_handle_t handle) {
                                     "__airrt_module_descriptor");
 }
 
+void emitTraceStart(std::ostream &s) { s << "[\n"; }
+
+void emitTraceEnd(std::ostream &s) { s << "{}]\n"; }
+
+void emitTraceEvent(std::ostream &s, std::string name, std::string cat,
+                    std::string ph, uint64_t ts, int64_t tid, int64_t pid) {
+  s << "{\n";
+  s << "  \"name\": \"" << name << "\","
+    << "\n";
+  s << "  \"cat\": \"" << cat << "\","
+    << "\n";
+  s << "  \"ph\": \"" << ph << "\","
+    << "\n";
+  s << "  \"ts\": " << ts << ","
+    << "\n";
+  s << "  \"pid\": " << pid << ","
+    << "\n";
+  s << "  \"tid\": " << tid << ","
+    << "\n";
+  s << "  \"args\": "
+    << "{}"
+    << ""
+    << "\n";
+  s << "},\n";
+}
+
 uint64_t air_segment_load(const char *name) {
   assert(_air_host_active_libxaie);
 
@@ -375,6 +402,24 @@ uint64_t air_segment_load(const char *name) {
     mlir->configure_switchboxes(_air_host_active_libxaie);
     mlir->initialize_locks(_air_host_active_libxaie);
     mlir->configure_dmas(_air_host_active_libxaie);
+    
+    uint64_t start_row = 3;
+    uint64_t start_col = 5;
+    uint64_t num_row = 2;
+    uint64_t num_col = 2;
+
+    for (int row=0; row<num_row; row++) {
+      for (int col=0; col<num_col; col++) {
+
+        // counter 0
+        _air_start[col][row][0] = 0;
+        XAie_PerfCounterControlSet(&_air_host_active_libxaie->DevInst,
+          XAie_TileLoc(col+start_col,row+start_row),
+          XAIE_MEM_MOD, 0, XAIE_EVENT_LOCK_0_ACQ_MEM, XAIE_EVENT_LOCK_0_REL_MEM);
+        XAie_PerfCounterGet(&_air_host_active_libxaie->DevInst, 
+          XAie_TileLoc(col+start_col,row+start_row), XAIE_MEM_MOD, 0, &_air_start[col][row][0]);
+      }
+    }
     mlir->start_cores(_air_host_active_libxaie);
   } else {
     printf("Failed to locate segment '%s' configuration functions!\n",
@@ -384,6 +429,37 @@ uint64_t air_segment_load(const char *name) {
   _air_host_active_segment.segment_desc = segment_desc;
   return 0;
 }
+
+
+uint32_t air_perf_counter_diff() {
+  uint64_t start_row = 3;
+  uint64_t start_col = 5;
+  uint64_t num_row = 2;
+  uint64_t num_col = 2;
+
+  uint32_t end = 0;
+  for (int row=0; row<num_row; row++) {
+    for (int col=0; col<num_col; col++) {
+
+      auto id = col*num_row + row;
+
+      // counter 0
+      auto start = _air_start[col][row][0];
+      end = 0;
+      XAie_PerfCounterGet(&_air_host_active_libxaie->DevInst,
+        XAie_TileLoc(col+start_col,row+start_row), XAIE_MEM_MOD, 0, &end);
+      if (end < start) {
+          printf("WARNING: EventMonitor: performance counter wrapped!\n");
+      } else {
+          emitTraceEvent(std::cout, "counter 0", "mem", "B", start, id, 0);
+          emitTraceEvent(std::cout, "counter 0", "mem", "E", end, id, 0);
+      }
+    }
+  }
+  emitTraceEnd(std::cout);
+  return 0;
+}
+
 
 uint64_t air_herd_load(const char *name) {
   // If no segment is loaded, load the segment associated with this herd
